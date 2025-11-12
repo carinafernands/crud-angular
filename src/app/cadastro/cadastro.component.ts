@@ -7,11 +7,15 @@ import {MatInputModule } from '@angular/material/input';
 import { MatIconModule} from '@angular/material/icon'
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar} from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
 import { Cliente } from './client';
 import { ClienteService } from '../cliente.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { NgxMaskDirective, provideNgxMask} from 'ngx-mask';
+import { BrasilapiService } from '../brasilapi.service';
+import { Municipio, Estados } from '../brasilapi.models';
+import { CommonModule } from "@angular/common";
 
 
 @Component({
@@ -23,9 +27,11 @@ import { NgxMaskDirective, provideNgxMask} from 'ngx-mask';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
+    MatSelectModule,
     FormsModule,
-    NgxMaskDirective
-  ],
+    NgxMaskDirective,
+    CommonModule
+],
   providers: [
     provideNgxMask()
   ],
@@ -37,14 +43,15 @@ export class CadastroComponent implements OnInit {
   cliente: Cliente = Cliente.newCliente();
   atualizando: boolean = false;
   snake: MatSnackBar = inject(MatSnackBar);
+  estados: Estados[] = [];
+  municipios: Municipio[] = [];
 
   constructor(
     private service: ClienteService,
+    private brasilApiService: BrasilapiService,
     private route: ActivatedRoute,
     private router: Router
-  ){
-
-  }
+  ){}
 
   ngOnInit(): void {
       this.route.queryParamMap.subscribe( (query: any) => {
@@ -59,6 +66,8 @@ export class CadastroComponent implements OnInit {
 
         }
       })
+
+      this.carregarUfs();
   }
 
   salvar(){
@@ -80,4 +89,10 @@ export class CadastroComponent implements OnInit {
     this.snake.open(mensagem, "Ok")
   }
 
+  carregarUfs(){
+    this.brasilApiService.listarUfs().subscribe({
+      next: listaEstados => this.estados = listaEstados,
+      error: erro => console.log("Ocorreu um erro:", erro)
+    })
+  }
 }
