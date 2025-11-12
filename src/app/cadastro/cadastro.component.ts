@@ -10,6 +10,7 @@ import { Cliente } from './client';
 import { ClienteService } from '../cliente.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OnInit } from '@angular/core';
+import { NgxMaskDirective, provideNgxMask} from 'ngx-mask';
 
 
 @Component({
@@ -21,10 +22,11 @@ import { OnInit } from '@angular/core';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
-    FormsModule
-
-
-
+    FormsModule,
+    NgxMaskDirective
+  ],
+  providers: [
+    provideNgxMask()
   ],
   templateUrl: './cadastro.component.html',
   styleUrl: './cadastro.component.scss'
