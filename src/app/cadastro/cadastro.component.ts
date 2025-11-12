@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule} from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import {MatInputModule } from '@angular/material/input';
 import { MatIconModule} from '@angular/material/icon'
-import { MatButtonModule } from '@angular/material/button'
+import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar} from '@angular/material/snack-bar';
 import { Cliente } from './client';
 import { ClienteService } from '../cliente.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -35,6 +36,7 @@ export class CadastroComponent implements OnInit {
 
   cliente: Cliente = Cliente.newCliente();
   atualizando: boolean = false;
+  snake: MatSnackBar = inject(MatSnackBar);
 
   constructor(
     private service: ClienteService,
@@ -65,10 +67,17 @@ export class CadastroComponent implements OnInit {
 
       this.service.salvar(this.cliente);
       this.cliente = Cliente.newCliente();
+      this.mostrarMensagem("Salvo com sucesso!")
     } else {
       this.service.atualizar(this.cliente);
       this.router.navigate(['/consulta']);
+      this.mostrarMensagem("Atualizado com sucesso!")
+
     }
+  }
+
+  mostrarMensagem(mensagem: string){
+    this.snake.open(mensagem, "Ok")
   }
 
 }
