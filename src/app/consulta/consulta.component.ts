@@ -1,3 +1,4 @@
+import { ClienteService } from './../cliente.service';
 import { Component, OnInit,  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {MatInputModule } from '@angular/material/input';
@@ -7,9 +8,8 @@ import {MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import {MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from "@angular/material/button";
-import { ClienteService } from '../cliente.service';
 import { Cliente } from '../cadastro/client';
-import { _VisuallyHiddenLoader } from "@angular/cdk/private";
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -22,7 +22,8 @@ import { _VisuallyHiddenLoader } from "@angular/cdk/private";
     FormsModule,
     MatTableModule,
     MatButtonModule,
-    CommonModule
+    CommonModule,
+
 ],
   templateUrl: './consulta.component.html',
   styleUrl: './consulta.component.scss'
@@ -31,9 +32,13 @@ export class ConsultaComponent implements OnInit {
 
   nomeBusca: string = '';
   listaClientes: Cliente[] = [];
-  colunasTable: string[] = ["id", "nome", "email", "cpf", "dataNascimento"];
+  colunasTable: string[] = ["id", "nome", "email", "cpf", "dataNascimento", "acoes"];
 
-  constructor (private service: ClienteService){
+  constructor (
+
+    private service: ClienteService,
+    private router: Router
+  ){
 
   }
 
@@ -44,4 +49,19 @@ export class ConsultaComponent implements OnInit {
   pesquisar(){
     this.listaClientes = this.service.pesquisarClientes(this.nomeBusca);
   }
+
+  prepararEditar(id: string){
+    this.router.navigate(['/cadastro'],  { queryParams: {"id": id }});
+  }
+
+  preparaDeletar(cliente: Cliente){
+    cliente.deletando = true;
+  }
+
+  deletar(cliente: Cliente){
+    this.service.deletar(cliente);
+    this.listaClientes = this.service.pesquisarClientes('');
+
+  }
+
 }
