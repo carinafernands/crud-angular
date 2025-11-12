@@ -4,7 +4,7 @@ export interface Estados {
 
 }
 
-export interface Municipio {
+export interface Municipios {
   nome: string,
   codigo_ibge: string;
 }

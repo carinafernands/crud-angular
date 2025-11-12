@@ -7,14 +7,14 @@ import {MatInputModule } from '@angular/material/input';
 import { MatIconModule} from '@angular/material/icon'
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar} from '@angular/material/snack-bar';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { Cliente } from './client';
 import { ClienteService } from '../cliente.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OnInit } from '@angular/core';
 import { NgxMaskDirective, provideNgxMask} from 'ngx-mask';
 import { BrasilapiService } from '../brasilapi.service';
-import { Municipio, Estados } from '../brasilapi.models';
+import { Municipios, Estados } from '../brasilapi.models';
 import { CommonModule } from "@angular/common";
 
 
@@ -44,7 +44,7 @@ export class CadastroComponent implements OnInit {
   atualizando: boolean = false;
   snake: MatSnackBar = inject(MatSnackBar);
   estados: Estados[] = [];
-  municipios: Municipio[] = [];
+  municipios: Municipios[] = [];
 
   constructor(
     private service: ClienteService,
@@ -62,6 +62,10 @@ export class CadastroComponent implements OnInit {
             if(clienteEncontrado){
               this.atualizando = true;
               this.cliente = this.service.buscarClientePorId(id) || Cliente.newCliente();
+              if(this.cliente.uf){
+                const event = { value: this.cliente.uf}
+                this.carregarMunicipios(event as MatSelectChange);
+              }
             }
 
         }
@@ -92,6 +96,14 @@ export class CadastroComponent implements OnInit {
   carregarUfs(){
     this.brasilApiService.listarUfs().subscribe({
       next: listaEstados => this.estados = listaEstados,
+      error: erro => console.log("Ocorreu um erro:", erro)
+    })
+  }
+
+  carregarMunicipios(event: MatSelectChange){
+    const ufselecionada = event.value;
+    this.brasilApiService.listarMunicipios(ufselecionada).subscribe({
+      next: listarMunicipios => this.municipios = listarMunicipios,
       error: erro => console.log("Ocorreu um erro:", erro)
     })
   }
